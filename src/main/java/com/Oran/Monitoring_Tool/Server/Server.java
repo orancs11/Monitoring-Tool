@@ -43,13 +43,14 @@ public class Server{
         System.out.println("Client side has accepted");
         var in = new DataInputStream(this.clientSocket.getInputStream());
         String message = "";
-        while(!message.equals("Quit!")){
+        while(!message.equals("Quit!") && !clientSocket.isClosed()){
             try{
                 message = in.readUTF();
                 System.out.println("Client Message: " + message);
             }
             catch(IOException e){
                 e.printStackTrace();
+                clientSocket.close();
             }
         }
 
