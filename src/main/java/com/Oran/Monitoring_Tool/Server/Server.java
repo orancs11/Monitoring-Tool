@@ -1,6 +1,8 @@
 package com.Oran.Monitoring_Tool.Server;
 
 import com.Oran.Monitoring_Tool.ConfigurationProperties.ServerProperties;
+import com.Oran.Monitoring_Tool.DTOs.ClientInfo;
+import com.Oran.Monitoring_Tool.Utilities.Serializer;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,18 +39,20 @@ public class Server{
     }
 
 
-    public void openConnection() throws IOException{
+    public void openConnection() throws IOException, ClassNotFoundException{
         System.out.println("Waiting for Client Side!");
         clientSocket = this.serverSocket.accept();
         System.out.println("Client side has accepted");
         var in = new DataInputStream(this.clientSocket.getInputStream());
-        String message = "";
-        while(!message.equals("Quit!") && !clientSocket.isClosed()){
+
+        while(!clientSocket.isClosed()){
             try{
-                message = in.readUTF();
-                System.out.println("Client Message: " + message);
+                int length = in.readInt();
+                byte[] bytePack = in.readNBytes(length);
+                ClientInfo dataPack = (ClientInfo) Serializer.deserialize(bytePack);
+                System.out.println(dataPack);
             }
-            catch(IOException e){
+            catch(Exception e){
                 e.printStackTrace();
                 clientSocket.close();
             }

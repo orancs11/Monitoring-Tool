@@ -19,7 +19,7 @@ public class MonitoringToolApplication {
 			server.openConnection();
 
 		}
-		catch (IOException e){
+		catch (Exception e){
 			e.printStackTrace();
 		}
 	}
